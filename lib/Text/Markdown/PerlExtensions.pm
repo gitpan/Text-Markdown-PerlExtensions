@@ -1,6 +1,6 @@
 package Text::Markdown::PerlExtensions;
 {
-  $Text::Markdown::PerlExtensions::VERSION = '0.01';
+  $Text::Markdown::PerlExtensions::VERSION = '0.02';
 }
 use strict;
 use warnings;
@@ -14,6 +14,7 @@ my %handler =
 (
  'M' => \&_formatting_code_module,
  'A' => \&_formatting_code_author,
+ 'D' => \&_formatting_code_distribution,
 );
 
 sub markdown
@@ -102,6 +103,13 @@ sub _DoExtendedMarkup
     return $text;
 }
 
+sub _formatting_code_distribution
+{
+    my $dist_name = shift;
+
+    return qq{<a href="https://metacpan.org/release/$dist_name" class="distribution">$dist_name</a>};
+}
+
 sub _formatting_code_module
 {
     my $module_name = shift;
@@ -128,7 +136,7 @@ Text::Markdown::PerlExtensions - markdown converter that supports perl-specific 
 
 In your markdown:
 
- Have a look at M<Moops> by A<TOBYINK>. It's *awesome*!
+ Have a look at M<PerlX::Define> in D<Moops> by A<TOBYINK>.
 
 And to convert that:
 
@@ -138,14 +146,15 @@ And to convert that:
 =head1 DESCRIPTION
 
 Text::Markdown::PerlExtensions provides a function for converting markdown
-to HTML. It is a subclass of L<Text::Markdown> that provides two additional
+to HTML. It is a subclass of L<Text::Markdown> that provides three additional
 features:
 
 =over 4
 
 =item *
 
-Two pod-style formatting codes, used for module names and PAUSE author IDs.
+Three pod-style formatting codes, used for distribution names,
+module names and PAUSE author IDs.
 These generate links to the relevant pages on L<MetaCPAN|https://metacpan.org>.
 
 =item *
@@ -165,6 +174,15 @@ This generates:
  <a href="https://metacpan.org/pod/Module::Path" class="module">Module::Path</a>
 
 The link is given a class, so you can style module names.
+
+To refer to a distribution, use the B<D> formatting code.
+If you write
+
+ D<Dancer>
+
+this generates:
+
+ <a href="https://metacpan.org/release/Dancer" class="distribution">Dancer</a>
 
 Similarly, to refer to a CPAN author, use the B<A> formatting code.
 If you write:
