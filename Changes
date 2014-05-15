@@ -1,5 +1,11 @@
 Revision history for Perl module Text::Markdown::PerlExtensions
 
+0.03 2014-05-15
+    - Added P<> for referring to one of Perl's built-in functions.
+      Generates a link to perldoc.perl.org.
+    - Improved structure of documentation, particularly the parts describing
+      the additional notations.
+
 0.02 2014-02-09
     - Added D<> for referring to a CPAN distribution.
 

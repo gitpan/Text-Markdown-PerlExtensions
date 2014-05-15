@@ -1,7 +1,5 @@
 package Text::Markdown::PerlExtensions;
-{
-  $Text::Markdown::PerlExtensions::VERSION = '0.02';
-}
+$Text::Markdown::PerlExtensions::VERSION = '0.03';
 use strict;
 use warnings;
 use 5.8.0;
@@ -15,6 +13,7 @@ my %handler =
  'M' => \&_formatting_code_module,
  'A' => \&_formatting_code_author,
  'D' => \&_formatting_code_distribution,
+ 'P' => \&_formatting_code_perlfunc,
 );
 
 sub markdown
@@ -124,6 +123,13 @@ sub _formatting_code_author
     return qq{<a href="https://metacpan.org/author/$author_id" class="cpanAuthor">$author_id</a>};
 }
 
+sub _formatting_code_perlfunc
+{
+    my $function_name = shift;
+
+    return qq{<a href="http://perldoc.perl.org/functions/$function_name.html" class="function">$function_name</a>};
+}
+
 1;
 
 =encoding utf8
@@ -136,7 +142,7 @@ Text::Markdown::PerlExtensions - markdown converter that supports perl-specific 
 
 In your markdown:
 
- Have a look at M<PerlX::Define> in D<Moops> by A<TOBYINK>.
+ You might P<use> M<PerlX::Define> in D<Moops> by A<TOBYINK>.
 
 And to convert that:
 
@@ -146,16 +152,18 @@ And to convert that:
 =head1 DESCRIPTION
 
 Text::Markdown::PerlExtensions provides a function for converting markdown
-to HTML. It is a subclass of L<Text::Markdown> that provides three additional
+to HTML.
+It is a subclass of L<Text::Markdown> that provides two additional
 features:
 
 =over 4
 
 =item *
 
-Three pod-style formatting codes, used for distribution names,
-module names and PAUSE author IDs.
-These generate links to the relevant pages on L<MetaCPAN|https://metacpan.org>.
+Four pod-style formatting codes, used for distribution names,
+module names, PAUSE author IDs, and Perl's built-in functions.
+These generate links to the relevant pages on L<MetaCPAN|https://metacpan.org>
+or L<perldoc.perl.org|http://perldoc.perl.org>.
 
 =item *
 
@@ -164,8 +172,16 @@ A mechanism for adding further pod-style formatting codes.
 =back
 
 I wrote this module to use with my blogging engine.
-I found that I was constantly writing links to MetaCPAN, and wanted a terser notation.
-To refer to a module on CPAN, you use the B<M> formatting code. If you write:
+I found that I was constantly writing links to MetaCPAN,
+and wanted a terser notation.
+
+The following sections describe each of the extensions,
+one by one.
+
+=head2 Module
+
+To refer to a module on CPAN, you use the B<M> formatting code.
+If you write:
 
  M<Module::Path>
 
@@ -174,6 +190,8 @@ This generates:
  <a href="https://metacpan.org/pod/Module::Path" class="module">Module::Path</a>
 
 The link is given a class, so you can style module names.
+
+=head2 Distribution
 
 To refer to a distribution, use the B<D> formatting code.
 If you write
@@ -184,6 +202,8 @@ this generates:
 
  <a href="https://metacpan.org/release/Dancer" class="distribution">Dancer</a>
 
+=head2 CPAN Author
+
 Similarly, to refer to a CPAN author, use the B<A> formatting code.
 If you write:
 
@@ -193,7 +213,30 @@ This generates:
 
  <a href="https://metacpan.org/author/NEILB" class="cpanAuthor">NEILB</a>
 
-All other syntax is as supported by L<Text::Markdown>
+=head2 Perl built-in function
+
+To link to documentation for one of Perl's built-in functions,
+use the B<P> formatting code:
+
+ P<require>
+
+This example would produce:
+
+ <a href="http://perldoc.perl.org/functions/require.html" class="function">require</a>
+
+I really wanted to use the B<F> formatting code for this,
+but that's already taken in the L<pod spec|http://perldoc.perl.org/perlpod.html>,
+used for highlighting file names.
+
+Note: this doesn't check whether the function name given is actually a
+Perl built-in.
+
+=head2 Markdown
+
+All other syntax is as supported by L<Text::Markdown>.
+You shouldn't find any clashes between the Pod-like extensions;
+I haven't found any so far, but please let me know if you
+experience any problems.
 
 =head1 Adding formatting codes
 
